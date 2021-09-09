@@ -1,0 +1,49 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Student {
+  studentId: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  grade: String!
+  division: String!
+  dob: DateTime!
+  age: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  getAllStudents: [Student!]!
+  getStudentById(studentId: String!): Student!
+}
+
+type Mutation {
+  createStudent(createstudent: CreateStudentInput!): Student!
+  updateStudent(updatestudent: UpdateStudentInput!): Student!
+  deleteStudent(studentId: String!): Student!
+}
+
+input CreateStudentInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  grade: String!
+  division: String!
+  dob: DateTime!
+}
+
+input UpdateStudentInput {
+  firstName: String
+  lastName: String
+  email: String
+  grade: String
+  division: String
+  dob: DateTime
+  studentId: String!
+}
