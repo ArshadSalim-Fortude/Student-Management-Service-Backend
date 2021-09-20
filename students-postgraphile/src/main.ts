@@ -15,6 +15,8 @@ async function bootstrap() {
         watchPg: true,
         graphiql: true,
         enhanceGraphiql: true,
+        enableCors: true,
+        
       }
     )
   );

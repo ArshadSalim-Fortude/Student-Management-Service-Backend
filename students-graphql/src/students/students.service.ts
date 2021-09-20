@@ -11,15 +11,15 @@ export class StudentsService {
     @InjectRepository(Student) private studentRepository: Repository<Student>,
   ) {}
 
-  async findAll(): Promise<Student[]> {
+  async findAllStudents(): Promise<Student[]> {
     return this.studentRepository.find();
   }
 
-  async findOne(id: string): Promise<Student> {
+  async findOneStudent(id: string): Promise<Student> {
     return this.studentRepository.findOne(id);
   }
 
-  async create(student: CreateStudentInput): Promise<Student> {
+  async createStudent(student: CreateStudentInput): Promise<Student[]> {
     //console.log("student date", student);
     const { firstName, lastName, grade, division, dob, email } = student;
 
@@ -35,7 +35,7 @@ export class StudentsService {
     ) {
       age--;
     }
-    return await this.studentRepository.save({
+    await this.studentRepository.save({
       firstName: firstName,
       lastName: lastName,
       grade: grade,
@@ -45,9 +45,11 @@ export class StudentsService {
       age: age,
     });
 
+    return await this.findAllStudents();
+
   }
 
-  async update(
+  async updateStudent(
     id: string,
     studentupdate: UpdateStudentInput,
   ): Promise<Student> {
@@ -78,12 +80,12 @@ export class StudentsService {
     });
     stud.studentId = id;
     await this.studentRepository.save(stud);
-    return await this.findOne(id);
+    return await this.findOneStudent(id);
     
   }
 
-  async remove(id: string) {
-    let stud = await this.findOne(id);
+  async removeStudent(id: string) {
+    let stud = await this.findOneStudent(id);
     if (stud) {
       let tempdel: Student = await this.studentRepository.create(stud);
       let del = await this.studentRepository.delete(id);
@@ -92,5 +94,9 @@ export class StudentsService {
       }
     }
     throw new NotFoundException(`No student record by id ${id} can be found!`);
+  }
+
+  async bulkInsertStudents(students: any) {
+    
   }
 }

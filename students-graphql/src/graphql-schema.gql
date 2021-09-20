@@ -24,9 +24,10 @@ type Query {
 }
 
 type Mutation {
-  createStudent(createstudent: CreateStudentInput!): Student!
+  createStudent(createstudent: CreateStudentInput!): [Student!]!
   updateStudent(updatestudent: UpdateStudentInput!): Student!
   deleteStudent(studentId: String!): Student!
+  bulkInsert(students: BulkInsertInput!): String!
 }
 
 input CreateStudentInput {
@@ -47,3 +48,12 @@ input UpdateStudentInput {
   dob: DateTime
   studentId: String!
 }
+
+input BulkInsertInput {
+  jsonData: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")

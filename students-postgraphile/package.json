@@ -25,6 +25,8 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "postgraphile": "^4.12.3",
+    "postgraphile-plugin-many-create-update-delete": "^1.0.6",
+    "postgraphile-plugin-nested-mutations": "^1.1.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
