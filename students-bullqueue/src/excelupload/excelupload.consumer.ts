@@ -2,7 +2,10 @@ import { ExceluploadService } from './excelupload.service';
 import { OnQueueCompleted, OnQueueFailed, Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import * as XLSX from 'xlsx';
-import { request, gql } from 'graphql-request'
+import { request, gql } from 'graphql-request';
+import * as SC from 'socketcluster-client'
+
+
 
 
 @Processor('excelupload-queue')
@@ -37,36 +40,18 @@ export class ExceluploadConsumer {
                 age--;
             }
             await Object.assign(data, {age: age});
-            jsonData.push(data);
+            jsonData.push({
+                firstname: data.firstName,
+                lastname: data.lastName,
+                email: data.email,
+                grade: data.grade,
+                division: data.division,
+                dob: data.dob,
+                age: data.age
+            });
         })
 
-        // jsonData.forEach(async(data: any) => {
-        //     console.log("individual data", data);
-        //     await request(
-        //         'http://localhost:3500/graphql',
-        //         gql`
-        //             mutation MyMutation($firstName: String!, $lastName: String!, $email: String!, $grade: String!, $division: String!, $dob: Datetime!, $age: Int!){
-        //                 createStudent(input:{student: { firstName: $firstName, lastName: $lastName, email: $email, grade: $grade, division: $division, dob: $dob, age: $age}})
-        //             } 
-        //         `,
-        //         {
-        //             firstName: data.firstName,
-        //             lastName: data.lastName,
-        //             email: data.email,
-        //             grade: data.grade,
-        //             division: data.division,
-        //             dob: data.dob,
-        //             age: age
-        //         }
-        //     ).then((res:any) => {
-        //         console.log("Result from postgraphile", res);
-
-        //     }).catch(err => {
-        //         console.log("error", err);
-        //     })
-
-        // })
-        await request(
+        let sending =  await request(
             'http://localhost:3000/graphql',
             gql`
                 mutation($jsonData: JSON!){
@@ -80,8 +65,24 @@ export class ExceluploadConsumer {
             }
         ).then((data:any) => {
             console.log("Data back after bulk insert", data);
+            return data;
         }).catch(err => {
             console.log("error is",err);
+            return err;
         })
+
+        return sending;
+    }
+
+    @OnQueueCompleted()
+    completed(job: Job, result: any){
+        console.log("result back after bulk insert", result);
+        
+    }
+
+    @OnQueueFailed()
+    failed(job: Job, err: Error){
+        console.log("error", err);
+        
     }
 }

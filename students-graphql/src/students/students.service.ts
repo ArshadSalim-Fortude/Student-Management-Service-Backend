@@ -4,6 +4,9 @@ import { UpdateStudentInput } from './dto/update-student.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
+import { request, gql } from 'graphql-request';
+import JSON from 'graphql-type-json';
+
 
 @Injectable()
 export class StudentsService {
@@ -52,7 +55,7 @@ export class StudentsService {
   async updateStudent(
     id: string,
     studentupdate: UpdateStudentInput,
-  ): Promise<Student> {
+  ): Promise<Student[]> {
     const { firstName, lastName, grade, division, dob, email } = studentupdate;
     let age: number;
     if (dob) {
@@ -80,7 +83,7 @@ export class StudentsService {
     });
     stud.studentId = id;
     await this.studentRepository.save(stud);
-    return await this.findOneStudent(id);
+    return await this.findAllStudents();
     
   }
 
@@ -97,6 +100,27 @@ export class StudentsService {
   }
 
   async bulkInsertStudents(students: any) {
-    
+    console.log("Students in services", students);
+    let sending = await request(
+      'http://localhost:3500/graphql',
+      gql`
+        mutation MyMutation($students: [StudentsBulkInputRecordInput]){
+          bulkInsert(input: { students: $students}){
+            string
+          }
+        }
+      `,
+      {
+        students: students
+      }
+    ).then((res: any) => {
+      console.log("result in services", res.bulkInsert.string);
+      return res.bulkInsert.string;
+    }).catch(err => {
+      console.log("Err", err);
+      return err;
+    })
+
+    return sending;
   }
 }

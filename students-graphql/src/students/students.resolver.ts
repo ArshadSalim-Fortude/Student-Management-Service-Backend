@@ -25,7 +25,7 @@ export class StudentsResolver {
     return this.studentsService.createStudent(createstudent);
   }
 
-  @Mutation(() => Student, { name: 'updateStudent' })
+  @Mutation(() => [Student], { name: 'updateStudent' })
   updateStudent(@Args('updatestudent') updatestudent: UpdateStudentInput) {
     return this.studentsService.updateStudent(updatestudent.studentId, updatestudent);
   }
@@ -37,8 +37,9 @@ export class StudentsResolver {
 
   @Mutation(() => String, { name: 'bulkInsert'})
   bulkInsert(@Args('students') students: BulkInsertInput) {
-    console.log("Bulk insert", students);
-    this.studentsService.bulkInsertStudents(students.jsonData)
-    return "hello";
+    //console.log("Bulk insert", students);
+    return this.studentsService.bulkInsertStudents(students.jsonData);
+    
+    
   }
 }

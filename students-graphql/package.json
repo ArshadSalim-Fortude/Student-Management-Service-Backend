@@ -28,6 +28,7 @@
     "@nestjs/typeorm": "^8.0.2",
     "apollo-server-express": "^3.3.0",
     "graphql": "^15.5.3",
+    "graphql-request": "^3.5.0",
     "graphql-type-json": "^0.3.2",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
