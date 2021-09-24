@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { request, gql } from 'graphql-request';
 import JSON from 'graphql-type-json';
+import { error } from 'console';
 
 
 @Injectable()
@@ -49,7 +50,6 @@ export class StudentsService {
     });
 
     return await this.findAllStudents();
-
   }
 
   async updateStudent(
@@ -87,20 +87,22 @@ export class StudentsService {
     
   }
 
-  async removeStudent(id: string) {
-    let stud = await this.findOneStudent(id);
-    if (stud) {
-      let tempdel: Student = await this.studentRepository.create(stud);
+  async removeStudent(id: string): Promise<Student> {
+    try{
+      const delStudent = await this.studentRepository.findOne(id);
+      const tempdel: Student = this.studentRepository.create(delStudent);
       let del = await this.studentRepository.delete(id);
-      if ((await del).affected === 1) {
-        return tempdel;
-      }
+      return tempdel
+    } catch(err){
+      console.log("error in catch block", err);
+      return err
     }
-    throw new NotFoundException(`No student record by id ${id} can be found!`);
+
+
   }
 
   async bulkInsertStudents(students: any) {
-    console.log("Students in services", students);
+    //console.log("Students in services", students);
     let sending = await request(
       'http://localhost:3500/graphql',
       gql`
@@ -114,7 +116,7 @@ export class StudentsService {
         students: students
       }
     ).then((res: any) => {
-      console.log("result in services", res.bulkInsert.string);
+      //console.log("result in services", res.bulkInsert.string);
       return res.bulkInsert.string;
     }).catch(err => {
       console.log("Err", err);

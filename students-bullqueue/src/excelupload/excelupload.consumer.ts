@@ -5,7 +5,10 @@ import * as XLSX from 'xlsx';
 import { request, gql } from 'graphql-request';
 import * as SC from 'socketcluster-client'
 
-
+let socket: any = SC.create({
+    hostname: 'localhost',
+    port: 8000,
+});
 
 
 @Processor('excelupload-queue')
@@ -77,12 +80,12 @@ export class ExceluploadConsumer {
     @OnQueueCompleted()
     completed(job: Job, result: any){
         console.log("result back after bulk insert", result);
-        
+        socket.transmit('jobcompleted', "Job Completed"); 
     }
 
     @OnQueueFailed()
     failed(job: Job, err: Error){
         console.log("error", err);
-        
+        socket.transmit('jobcompleted', "Job Failed"); 
     }
 }
