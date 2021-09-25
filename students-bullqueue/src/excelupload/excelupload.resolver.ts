@@ -23,7 +23,7 @@ export class ExceluploadResolver {
     const changedFilename = path.parse(file.filename).name+"-"+Math.round(Math.random()*100)/100+path.extname(file.filename);
     await file.createReadStream().pipe(fs.createWriteStream(`./src/upload-folder/${changedFilename}`));
 
-    this.exceluploadProducer.uploadExcel(changedFilename);
+    this.exceluploadProducer.uploadExcel(changedFilename); 
     return "Excel Uploaded";
   }
 
